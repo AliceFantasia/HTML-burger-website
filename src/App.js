@@ -16,13 +16,13 @@ function App() {
       <div className="App">
         <Navbar />
         <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/login" component={Login} />
-            <Route path="/aboutus" component={Aboutus} />
-            <Route path="/userManagement" component={UserManagement} />
-            <Route path="/productManagement" component={ProductManagement} />
-            <Route path="/userResult" component={DisplayUsers} />
-            <Route path="/productResult" component={DisplayProduct} />
+            <Route exact path="/HTML-burger-website" exact component={Home} />
+            <Route path="/HTML-burger-website/login" exact component={Login} />
+            <Route path="/HTML-burger-website/aboutus" exact component={Aboutus} />
+            <Route path="/HTML-burger-website/userManagement" exact component={UserManagement} />
+            <Route path="/HTML-burger-website/productManagement" exact component={ProductManagement} />
+            <Route path="/HTML-burger-website/userResult" exact component={DisplayUsers} />
+            <Route path="/HTML-burger-website/productResult" exact component={DisplayProduct} />
         </Switch>
       </div>
     </BrowserRouter>
