@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Register</title>
+        <link rel="stylesheet" href="Styles/Project.css">
+        <style>
+            .container{
+                display: flex;
+                margin-top: 0%;
+                margin-bottom: 0%;
+                justify-content: center;
+            }
+            .container .collumn{
+                border-radius: 10px;
+                width: 33%;
+                padding: 10px;
+                margin: 10px;
+            }
+            input{
+                width: 90%;
+            }
+        </style>
+        <script src="Scripts/General.js"></script>
+    </head>
+    <body>
+        <section >
+            <!--Nav bar-->
+            <nav>
+                <a href="/">Homepage</a>
+                <a href="/login">Login</a>
+                <a href="/search">Search</a>
+                <a href="/about">About Us</a>
+            </nav>
+            <!--Container contain register box-->
+            <section class="container">
+                <section class="collumn">
+                    <form method="POST">
+                        <fieldset style="width: 90%; border-radius: 20px; justify-content: center; margin: auto; padding: 10px;;">
+                            <legend style="text-align: center; font-size: large; font-weight: bold;">Register</legend>
+                            <lable>Username:</lable> <br>
+                                <input type="text" name="username" id="Username" required placeholder="username"><br><br>
+                            <lable>Password:</lable><br>
+                                <input type="password" name="password" id="Password" required placeholder="password"><br><br><br>
+                            <lable>First name:</lable><br>
+                                <input type="text" name="firstName" id="Firstname" required placeholder="first name"><br><br>
+                            <lable>Last name:</lable><br>
+                                <input type="text" name="lastName" id="Lastname" required placeholder="last name"><br><br>
+                            <lable>Birth date:</lable><br>
+                                <input type="date" name="DOB" id="DateOfBirth" required><br><br>
+                            <lable>Address:</lable><br>
+                                <input type="text" style="display: inline-block;line-height: 28px;" name="address" id="Address" required placeholder="address"><br><br>
+                            <lable>E-mail:</lable><br>
+                                <input type="email" name="email" id="Email" required placeholder="email@email.com"><br><br><br>
+                            <button type="button" style="justify-content: center;" onclick="register()"> Register </button>
+                        </fieldset>
+                    </form>
+                </section>
+            </section>
+        </section>
+
+        <script>
+            let usernameRef = document.querySelector("#Username");
+            let passwordRef = document.querySelector("#Password");
+            let firstNameRef = document.querySelector("#Firstname");
+            let lastNameRef = document.querySelector("#Lastname");
+            let dobRef = document.querySelector("#DateOfBirth");
+            let addressRef = document.querySelector("#Address");
+            let emailRef = document.querySelector("#Email");
+
+            async function callWS(url){
+                let data;
+                let response;
+
+                let id = "u";
+                for(let i = 0 ; i < 11 ; i++){
+                    id += Math.floor(Math.random() * 10) + '0'; 
+                }
+
+                let toParse = {
+                    user : {
+                        uID: id,
+                        firstName: firstNameRef.value,
+                        lastName: lastNameRef.value,
+                        DOB: dobRef.value,
+                        address: addressRef.value,
+                        email: emailRef.value
+                    },
+                    account : {
+                        username: usernameRef.value,
+                        password: passwordRef.value
+                    }
+                };
+                response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(toParse)
+                });
+                data = await response.json();
+                return data;
+            }
+            
+            function register(){
+                callWS("http://localhost:3000/register").then(
+                    (data) => {
+                        if(data && !data.error){
+                            alert("Register Success");
+                            window.location.href = "/login";
+                        }
+                    }
+                );
+            }
+            updateNav();
+        </script>
+        
+    </body>
+</html>

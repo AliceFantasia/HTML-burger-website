@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>About Us</title>
+        <link rel="stylesheet" href="Styles/Project.css">
+        <style>
+            .container{
+                display: flex;
+                flex-direction: column;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            .container .row{
+                display: flex;
+                flex-direction: row;
+                border-radius: 10px;
+                border-color: rgb(53, 53, 53);
+                padding: 10px;
+                margin: 10px;
+            }
+            .container .row .imageBox{
+                border-radius: 10px;
+                margin-right: 10px;
+                margin-left: 10px;
+                width: 20%;
+            }
+            img{
+                display: block;
+                width: 90%;
+                border-radius: 50%;
+                padding: 5px;
+                margin:auto;
+            }
+            .container .row .info{
+                display: block;
+                font-size: large;
+                border-radius: 10px;
+                width: 25%;
+                padding: 10px;
+                margin: auto;
+            }
+        </style>
+        <script src="Scripts/General.js"></script>
+    </head>
+    <body>
+        <section >
+            <!--Nav bar-->
+            <nav>
+                <a href="/">Homepage</a>
+                <a href="/login">Login</a>
+                <a href="/search">Search</a>
+                <a href="#">About Us</a>
+            </nav>
+            <h1 style="text-align: center;">About us</h1>
+            <section class="container">
+                <!--First Row-->
+                <section class="row">
+                    <!--Member 1: image and information-->
+                    <section class="imageBox">
+                            <img src="Images/P.png" alt="Eakdanai Sontichai P">
+                    </section>
+                    <section class="info">
+                            Name: Eakdanai Sontichai<br><br>
+                            ID: 6288046 <br><br>
+                            Section: 1<br><br>
+                    </section>
+                    <!--Member 2: image and information-->
+                    <section class="imageBox">
+                            <img src="Images/Earth.png" alt="Kasemwat Ongkanchana Earth">
+                    </section>
+                    <section class="info">
+                            Name: Kasemwat Ongkanchana <br><br>
+                            ID: 6288029<br><br>
+                            Section: 1<br><br>
+                    </section>
+                </section>
+                <!--Second Row-->
+                <section class="row">
+                    <!--Member 3: image and information-->
+                    <section class="imageBox">
+                            <img src="Images/Pan.png" alt="Srawin Krisanayotin Pan">
+                    </section>
+                    <section class="info">
+                            Name: Srawin Krisanayotin<br><br>
+                            ID: 6288025<br><br>
+                            Section: 1<br><br>
+                    </section>
+                    <!--Member 4: image and information-->
+                    <section class="imageBox">
+                            <img src="Images/MetasitGet.jfif" alt="Metasit Getrak Kla">
+                    </section>
+                    <section class="info">
+                            Name: Metasit Getrak<br><br>
+                            ID: 6288013<br><br>
+                            Section: 1<br><br>
+                    </section>
+                </section>
+            </section>
+        </section>
+        
+        <script>
+            updateNav();
+        </script>
+    </body>
+</html>

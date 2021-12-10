@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <title>Product Database</title>
+
+  <style>
+    button {
+      margin-top: 3%;
+      margin-left: 1%;
+    }
+
+    label {
+      margin-top: 1%;
+    }
+  </style>
+</head>
+
+<body>
+    
+    <h4>Insert & Update</h4>
+    <form class="form-horizontal" action="" method="POST" style="margin-top: 3%; margin-left: 5%; margin-bottom: 5%;">
+
+        <label class="control-label col-sm-2">Product ID:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="iu_id" placeholder="p1234567891234" name="iu_id">
+        </div>
+
+        <label class="control-label col-sm-2">Product Name:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="iu_name" placeholder="Cheese burger" name="iu_name">
+        </div>
+
+        <label class="control-label col-sm-2">Product Price:</label>
+        <div class="col-sm-10">
+            <input type="number" class="form-control" id="iu_price" placeholder="100" name="iu_price">
+        </div>
+
+        <label class="control-label col-sm-2">Product Calories:</label>
+        <div class="col-sm-10">
+            <input type="number" class="form-control" id="iu_cals" placeholder="250" name="iu_cals">
+        </div>
+            
+        <label class="control-label col-sm-2">Product info:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="iu_pInfo" placeholder="Made from 2 buns, a chunk of meat, and a slice of cheese" name="iu_pInfo">
+        </div>
+
+        <label class="control-label col-sm-2">Product image:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="iu_pImage" placeholder="X_Burgur.png" name="iu_pImage">
+        </div>
+
+        <Button type="button" class="btn btn-primary" id="insert" onclick="insert_update('insert')">Insert</Button>
+        <Button type="button" class="btn btn-primary" id="update" onclick="insert_update('update')">Update</Button>
+      
+    </form>
+
+    <h4>Delete, Select & Select All</h4>
+    <form class="form-horizontal" action="" method="POST" style="margin-top: 3%; margin-left: 5%; margin-bottom: 5%;">
+
+        <label class="control-label col-sm-2">Product ID:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="ds_id" placeholder="p1234567891234" name="ds_id">
+            <Button type="button" class="btn btn-primary" id="delete_id" onclick="select_delete('delete','id')">Delete</Button>
+            <Button type="button" class="btn btn-primary" id="select_id" onclick="select_delete('insert','id')">Select</Button>
+        </div>
+
+        <label class="control-label col-sm-2">Product Name:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="ds_name" placeholder="Cheese burger" name="ds_name">
+            <Button type="button" class="btn btn-primary" id="delete_name" onclick="select_delete('delete','name')">Delete</Button>
+            <Button type="button" class="btn btn-primary" id="select_name" onclick="select_delete('insert','name')">Select</Button>
+        </div>
+
+        <label class="control-label col-sm-2">Min - Max Price:</label>
+        <div class="col-sm-3">
+            <input type="number" class="form-control" id="ds_min_price" placeholder="Min Price" name="ds_min_price"> <br>
+            <input type="number" class="form-control" id="ds_max_price" placeholder="Max Price" name="ds_max_price">
+            <Button type="button" class="btn btn-primary" id="delete_price" onclick="select_delete('delete','price')">Delete</Button>
+            <Button type="button" class="btn btn-primary" id="select_price" onclick="select_delete('insert','price')">Select</Button>
+        </div>
+
+        <label class="control-label col-sm-2">Product Calories:</label>
+        <div class="col-sm-10">
+            <input type="number" class="form-control" id="ds_cals" placeholder="Maximum Calories" name="ds_cals">
+            <Button type="button" class="btn btn-primary" id="delete_cal" onclick="select_delete('delete','cal')">Delete</Button>
+            <Button type="button" class="btn btn-primary" id="select_cal" onclick="select_delete('insert','cal')">Select</Button>
+        </div>
+
+        <Button type="button"class="btn btn-primary" id="selectAll">Select all</Button>
+    
+    </form>
+
+  <div id="result"> </div>
+</body>
+    
+    
+<script>
+  async function callWS(url, method, sentData = {}) {
+    let data;
+    if (method == "select") {
+        let response = await fetch(url, {method: "GET",});
+        data = await response.json();
+        
+    } else if (method == "insert" || method == "update" || method == "delete") {
+        let aMethod;
+        if (method == "insert") {
+            aMethod = "POST";
+        } else if (method == "update") {
+            aMethod = "PUT";
+        } else if (method == "delete") {
+            aMethod = "DELETE";
+        } 
+        
+      let response = await fetch(url, {
+          method: aMethod,
+          headers: {Accept: "application/json","Content-Type": "application/json",},
+          body: JSON.stringify(sentData),
+      });
+        
+      data = await response.json();
+    }
+    return data;
+  }
+
+    let pID, pName, pPrice, pInfo;
+    
+    
+    let pIDTxtRef = document.querySelector("#iu_id");
+    let pNameTxtRef = document.querySelector("#iu_name");
+    let pPriceTxtRef = document.querySelector("#iu_price");
+    let pCalTxtRef = document.querySelector("#iu_cals");
+    let pInfoTxtRef = document.querySelector("#iu_pInfo");
+    let pImageTxtRef = document.querySelector("#iu_pImage");
+
+
+  function clearInput() {
+      pIDTxtRef.value = "";
+      pNameTxtRef.value = "";
+      pPriceTxtRef.value = "";
+      pCalTxtRef.value = "";
+      pInfoTxtRef.value = "";
+      pImageTxtRef.value = "";
+  }
+
+  let selectBtnRef = document.querySelector("#select");
+  let selectallBtnRef = document.querySelector("#selectAll");
+
+function insert_update(method){
+    
+    pIDTxtRef = document.querySelector("#iu_id");
+    pNameTxtRef = document.querySelector("#iu_name");
+    pPriceTxtRef = document.querySelector("#iu_price");
+    pCalTxtRef = document.querySelector("#iu_cals");
+
+    pID = pIDTxtRef.value;
+    pName = pNameTxtRef.value;
+    pPrice = pPriceTxtRef.value;
+    pCal = pCalTxtRef.value;
+    pInfo = pInfoTxtRef.value;
+    pImage = pImageTxtRef.value;
+    
+    let product_info = {
+        product: {
+            pID: pID,
+            pName: pName,
+            pPrice: pPrice,
+            pCal: pCal,
+            pInfo: pInfo,
+            pImage: pImage,
+        },
+    };
+
+    if(pID[0] != 'p' || pID.length != 14){
+        alert("Wrong ID pattern");
+        return;
+    }
+    
+    callWS("http://localhost:3000/product_list", method, product_info).then(
+        (data) => {
+            console.log(data);
+            if (data) {
+                alert(data.message);
+                let result = document.querySelector("#result");
+                result.innerHTML="";
+                clearInput();
+            }
+        }
+    );
+}
+function select_delete(method, fecthingMethod){
+        
+    pIDTxtRef = document.querySelector("#ds_id");
+    pNameTxtRef = document.querySelector("#ds_name");
+    pMinPriceTxtRef = document.querySelector("#ds_min_price");
+    pMaxPriceTxtRef = document.querySelector("#ds_max_price");
+    pCalTxtRef = document.querySelector("#ds_cals");
+
+    pID = pIDTxtRef.value;
+    pName = pNameTxtRef.value;
+    let pMinPrice = pMinPriceTxtRef.value;
+    let pMaxPrice = pMaxPriceTxtRef.value;
+    pCal = pCalTxtRef.value;
+
+    let product_info = {
+        method: fecthingMethod,
+        product:{
+            pID: pID,
+            pName: pName,
+            pMinPrice: pMinPrice,
+            pMaxPrice: pMaxPrice,
+            pCal: pCal
+        }
+    };
+    
+    callWS("http://localhost:3000/ds_product_list", method, product_info).then(
+        (data) => {
+            if (data && !data.error) {
+                alert(data.message);
+                let result = document.querySelector("#result");
+                if(method == "insert" && data.results.length > 0){
+                    let output = "<h1> Product List </h1>";
+                    output  += "<table class='table'>";
+                    output  += "<thead>";
+                    output  += "<tr>";
+                    output  += "<th scope='col'>#</th><th scope='col'>Name</th><th scope='col'> Price</th> <th scope='col'>Cal</th> <th scope='col'>Info.</th>";
+                    output  += "</tr>";
+                    output  += "</thread>";
+                    output  += "<tbody>";
+                    data.results.forEach((element)=>{
+                        output += "<tr>";
+                        output += "<td>" + element.pID+"</td>";
+                        output += "<td>" + element.pName+"</td>";
+                        output += "<td>" + element.pPrice+"</td>";
+                        output += "<td>" + element.pCal+"</td>";
+                        output += "<td>" + element.pInfo+"</td>";
+                    });
+                    output += "</tbody>";
+                    output += "</table>";
+                    result.innerHTML=output;
+                }
+                else{
+                    result.innerHTML="";
+                }
+                clearInput();
+            }
+        }
+    );
+}
+    
+selectallBtnRef.addEventListener("click",() =>{   
+    callWS("http://localhost:3000/product_list_all", "select").then(
+        (data) => {
+            console.log(data);
+            if (data && !data.error && data.results.length > 0) {
+                alert(data.message);
+                let output = "<h1> Product List </h1>";
+                output  += "<table class='table'>";
+                output  += "<thead>";
+                output  += "<tr>";
+                output  += "<th scope='col'>#</th><th scope='col'>Name</th><th scope='col'> Price</th> <th scope='col'>Cal</th> <th scope='col'>Info.</th>";
+                output  += "</tr>";
+                output  += "</thread>";
+                output  += "<tbody>";
+                data.results.forEach((element)=>{
+                    output += "<tr>";
+                    output += "<td>" + element.pID+"</td>";
+                    output += "<td>" + element.pName+"</td>";
+                    output += "<td>" + element.pPrice+"</td>";
+                    output += "<td>" + element.pCal+"</td>";
+                    output += "<td>" + element.pInfo+"</td>";
+                });
+                output += "</tbody>";
+                output += "</table>";
+                let result = document.querySelector("#result");
+                result.innerHTML=output;
+                clearInput();
+            }
+        }
+    );
+})
+</script>
+
+</html>

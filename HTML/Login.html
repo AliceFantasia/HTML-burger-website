@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" href="Styles/Project.css">
+        <style>
+            .container{
+                display: flex;
+                margin-top: 0%;
+                margin-bottom: 0%;
+                justify-content: center;
+            }
+            .container .collumn{
+                border-radius: 10px;
+                width: 33%;
+                padding: 10px;
+                margin: 10px;
+            }
+            .account{
+                width: 90%;
+                background-color: rgb(213, 213, 213);
+                padding: 10px;
+                border-radius: 5px;
+                margin: auto;
+            }
+        </style>
+        <script src="Scripts/General.js"></script>
+    </head>
+    <body>
+        <section >
+            <!--Nav bar-->
+            <nav>
+                <a href="/">Homepage</a>
+                <a href="#">Login</a>
+                <a href="/search">Search</a>
+                <a href="/about">About Us</a>
+            </nav>
+            <!--Container contain login box-->
+            <section class="container">
+            </section>
+        </section>
+        <script>
+            
+            let usernameRef = document.querySelector("#Username");
+            let passwordRef = document.querySelector("#Password");
+
+            async function callStudentWS(url, method){
+                let data;
+                let response;
+                if(method == "login"){
+                    response = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: usernameRef.value,
+                            password: passwordRef.value,
+                        })
+                    });
+                }
+                else if (method == "account"){
+                    response = await fetch(url, {
+                        method: "GET",
+                    });
+                }
+                data = await response.json();
+                return data;
+            }
+            
+            function login(){
+                callStudentWS("http://localhost:3000/login", "login").then(
+                    (data) => {
+                        if(data){
+                            if(data.error || data.results.length == 0){
+                                alert("Wrong username or password");
+                                window.location.href = "/login";
+                            }
+                            else{
+                                alert("Login successfully.");
+                                localStorage.setItem("currentSignedIn", JSON.stringify(data.results[0]));
+                                window.location.href = "/login";
+                            }
+                        }
+                    }
+                );
+            }
+
+            function logout(){
+                alert("Logout successfully.");
+                localStorage.setItem("currentSignedIn", "");
+                window.location.href = "/login";
+            }
+
+            function loadPage(){
+                let container = document.querySelector(".container");
+                let output = "";
+                if(localStorage.getItem("currentSignedIn") && localStorage.getItem("currentSignedIn") != ""){
+                    let dataObj = JSON.parse(localStorage.getItem("currentSignedIn"));
+                    callStudentWS("http://localhost:3000/user_list/" + dataObj.uID, "account").then(
+                        (data) => {
+                            if(data){
+                                output = 
+                                `
+                                    <section class="collumn">
+                                        <fieldset style="width: 90%; border-radius: 20px; justify-content: center; margin: auto; padding: 10px;">
+                                            <legend style="text-align: center; font-size: large; font-weight: bold;">Account</legend>
+                                            <div class="account"> Name: ${data.results.firstName} ${data.results.lastName}</div><br>
+                                            <div class="account"> Address: ${data.results.address}</div><br>
+                                            <div class="account"> Date of Birth: ${data.results.DOB}</div><br>
+                                            <div class="account"> E-mail: ${data.results.email}</div><br>
+                                            <div class="account"> Role: ${dataObj.role}</div><br>
+                                            <button type="button" style="justify-content: center;" onclick="logout()">Log out</button>
+                                        </fieldset>
+                                    </section>
+                                `
+                            }
+                            container.innerHTML = output;
+                        }
+                    );
+                } 
+                else{
+                    output = 
+                    `
+                        <section class="collumn">
+                            <form method="POST">
+                                <fieldset style="width: 90%; border-radius: 20px; justify-content: center; margin: auto; padding: 10px;;">
+                                    <legend style="text-align: center; font-size: large; font-weight: bold;">Login</legend>
+                                    <lable>Username:</lable><br>
+                                    <input type="text" name="username" id="Username" required placeholder="username"><br>
+                                    <lable>Password:</lable><br>
+                                    <input type="password" name="password" id="Password" required placeholder="password"><br><br>
+                                    <button type="button" onclick="login()"> Submit </button> &nbsp;&nbsp; <a href="/register">Register</a>
+                                </fieldset>
+                            </form>
+                        </section>
+                    `
+                    container.innerHTML = output;
+                    usernameRef = document.querySelector("#Username");
+                    passwordRef = document.querySelector("#Password");
+                }
+            }
+            loadPage();
+            updateNav();
+        </script>
+    </body>
+</html>

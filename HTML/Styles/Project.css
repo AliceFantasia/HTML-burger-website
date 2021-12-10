@@ -1,0 +1,35 @@
+body{
+    background-color: rgb(225, 225, 225);
+    color: rgb(0, 58, 0);
+}
+header, footer{
+    text-align: center;
+    padding: 10px;
+    margin: 0%;
+}
+footer{
+    position: fixed;
+    width: 100%;
+    left: 0%;
+    bottom: 0%;
+}
+nav{
+    color: black;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    background-color: rgb(174, 174, 174);
+    margin-top: 0%;
+    margin-bottom: 0%;
+    list-style-type: none;
+}
+nav a{
+    display:block;
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    padding: 14px 20px;
+}
+nav a:hover{
+    color: gray;
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Search</title>
+        <link rel="stylesheet" href="./Styles/Project.css">
+        <script src="Scripts/General.js"></script>
+        <style>
+            input{
+                border-color: aliceblue;
+                border-radius: 5px;
+                padding: 5px 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <section >
+            <!--Nav bar-->
+            <nav>
+                <a href="/">Homepage</a>
+                <a href="/login">Login</a>
+                <a href="#">Search</a>
+                <a href="/about">About Us</a>
+            </nav>
+            <!--Search content and the middle of the screen with serch box has the width of 50% of the window-->
+            <section style="justify-content: center; text-align: center;">
+                <form>
+                    <label><h1>Search</h1></label>
+                    <input type="text" id="searchBox_name" name="searchResult" style="width: 50%;" placeholder="product name"><br><br>
+
+                    [&nbsp;<input type="number" id="searchBox_minPrice" name="searchResult" style="width: 23%;" placeholder="min price">&nbsp; - 
+                        &nbsp;<input type="number" id="searchBox_maxPrice" name="searchResult" style="width: 23%;" placeholder="max price">&nbsp;]
+                        <br><br>
+ 
+                    <input type="number" id="searchBox_cal" name="searchResult" style="width: 50%;" placeholder="maximum calories"><br><br>
+
+                    <button type="button" onclick="search()">Search</button>
+                </form> 
+            </section>
+        </section>
+
+        <script>
+            let pNameRef = document.querySelector("#searchBox_name");
+            let minPriceRef = document.querySelector("#searchBox_minPrice");
+            let maxPricetRef = document.querySelector("#searchBox_maxPrice");
+            let pCalRef = document.querySelector("#searchBox_cal");
+            async function callWS(url){
+                let data;
+                let response;
+
+                let toParse = {
+                    product:{
+                        name: pNameRef.value,
+                        minPrice: minPriceRef.value,
+                        maxPrice: maxPricetRef.value,
+                        cal: pCalRef.value
+                    }
+                };
+                response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(toParse)
+                });
+                data = await response.json();
+                return data;
+            }
+            
+            function search(){
+                callWS("http://localhost:3000/search_product").then(
+                    (data) => {
+                        if(data && !data.error){
+                            if(data.results.length > 0){
+                                alert(data.message);
+                                localStorage .setItem("search_result",JSON.stringify(data.results));
+                                window.location.href = "/result";
+                            }
+                            else{
+                                alert("No product found");
+                            }
+                        }
+                    }
+                );
+            }
+            updateNav();
+        </script>
+        
+    </body>
+</html>

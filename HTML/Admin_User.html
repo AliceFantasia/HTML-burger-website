@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <title>User Database</title>
+
+  <style>
+    button {
+      margin-top: 3%;
+      margin-left: 1%;
+    }
+
+    label {
+      margin-top: 1%;
+    }
+  </style>
+</head>
+
+<body>
+    <h4>Insert</h4>
+    <form class="form-horizontal" style="margin-top: 3%; margin-left: 5%; margin-bottom: 5%;">
+
+        <label class="control-label col-sm-2">User ID:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="in_id" placeholder="u00000000001" name="in_id">
+        </div><br>
+
+        <label class="control-label col-sm-2">Username:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="in_un" placeholder="Username" name="in_username">
+        </div>
+
+        <label class="control-label col-sm-2">Password:</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="in_ps" placeholder="Password" name="in_password">
+        </div><br>
+
+        <label class="control-label col-sm-2">Firstname:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="in_fn" placeholder="Firstname" name="in_firstname">
+        </div>
+
+        <label class="control-label col-sm-2">Lastname:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="in_ln" placeholder="Lastname" name="in_lastname">
+        </div>
+            
+        <label class="control-label col-sm-2">Address:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="in_address" placeholder="110/57 Samsen-nai, Bangkok" name="in_address">
+        </div>
+            
+        <label class="control-label col-sm-2">Date Of Birth:</label>
+        <div class="col-sm-10">
+            <input type="datetime" class="form-control" id="in_DOB" placeholder="yyyy-mm-dd" name="in_dob">
+        </div>
+
+        <label class="control-label col-sm-2">Email:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="in_email" placeholder="stephen@gmail.com:" name="in_email">
+        </div>
+
+        <Button type="button" class="btn btn-primary" id="insert">Insert</Button>
+        <br><br>
+    </form>
+      
+    <h4>Update</h4>
+    <form class="form-horizontal" style="margin-top: 3%; margin-left: 5%; margin-bottom: 5%;">
+
+        <label class="control-label col-sm-2">User ID:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="up_id" placeholder="u00000000001" name="up_id">
+        </div><br>
+
+        <label class="control-label col-sm-2">Firstname:</label>
+        <div class="col-sm-10">
+        <input type="text" class="form-control" id="up_fn" placeholder="Firstname" name="up_firstname">
+        </div>
+
+        <label class="control-label col-sm-2">Lastname:</label>
+        <div class="col-sm-10">
+        <input type="text" class="form-control" id="up_ln" placeholder="Lastname" name="up_lastname">
+        </div>
+            
+        <label class="control-label col-sm-2">Address:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="up_address" placeholder="110/57 Samsen-nai, Bangkok" name="up_address">
+        </div>
+            
+        <label class="control-label col-sm-2">Date Of Birth:</label>
+        <div class="col-sm-10">
+        <input type="datetime" class="form-control" id="up_DOB" placeholder="yyyy-mm-dd" name="up_dob">
+        </div>
+
+        <label class="control-label col-sm-2">Email:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="up_email" placeholder="stephen@gmail.com:" name="up_email">
+        </div>
+      
+        <Button type="button" class="btn btn-primary" id="update">Update</Button>
+        <br><br>
+    </form> 
+
+    <h4>Delete, Select & Select All</h4>
+    <form class="form-horizontal" style="margin-top: 3%; margin-left: 5%; margin-bottom: 5%;">
+
+        <label class="control-label col-sm-2">User ID:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="sl_id" placeholder="u00000000001" name="sl_id">
+        </div>
+
+        <Button type="button" class="btn btn-primary" id="delete">Delete</Button>
+        <Button type="button" class="btn btn-primary" id="select">Select</Button>
+        <Button type="button" class="btn btn-primary" id="selectAll">Select all</Button>
+        <br><br>
+
+    </form>
+
+<!-- for applying result -->
+  <div id="result"> </div>
+</body>
+    
+<!-- callStudentWS, to be used as a connection for buttons -->
+    
+<script>
+  async function callWS(url, method, sentData = {}) {
+    let data;
+    if (method == "selectall") {
+        let response = await fetch(url, {method: "GET",});
+        data = await response.json();
+    
+    } else if (method == "select") {
+        let response = await fetch(url, {method: "GET",});
+        data = await response.json();
+        
+    } else if (method == "insert" || method == "update" || method == "delete") {
+        let aMethod;
+        if (method == "insert") {
+            aMethod = "POST";
+        } else if (method == "update") {
+            aMethod = "PUT";
+        } else if (method == "delete") {
+            aMethod = "DELETE";
+        } 
+        
+      let response = await fetch(url, {
+          method: aMethod,
+          headers: {Accept: "application/json","Content-Type": "application/json",},
+          body: JSON.stringify(sentData),
+      });
+        
+      data = await response.json();
+    }
+    return data;
+  }
+
+    let uID, firstName, lastName, address, DOB, email;
+    
+    let uIDTxtRef = document.querySelector("#in_id");
+    let firstNameTxtRef = document.querySelector("#in_fn");
+    let lastNameTxtRef = document.querySelector("#in_ln");
+    let addressTxtRef = document.querySelector("#in_address");
+    let DOBTxtRef = document.querySelector("#in_DOB");
+    let emailTxtRef = document.querySelector("#in_email");
+
+    let usernameRef = document.querySelector("#in_un");
+    let passwordRef = document.querySelector("#in_ps");
+
+
+  function clearInput() {
+      uIDTxtRef.value = "";
+      firstNameTxtRef.value = "";
+      lastNameTxtRef.value = "";
+      addressTxtRef.value = "";
+      DOBTxtRef.value = "";
+      emailTxtRef.value = "";
+  }
+
+  let insertBtnRef = document.querySelector("#insert");
+  let updateBtnRef = document.querySelector("#update");
+  let deleteBtnRef = document.querySelector("#delete");
+  let selectBtnRef = document.querySelector("#select");
+  let selectallBtnRef = document.querySelector("#selectAll");
+
+insertBtnRef.addEventListener("click", () => {
+    
+    uIDTxtRef = document.querySelector("#in_id");
+    firstNameTxtRef = document.querySelector("#in_fn");
+    lastNameTxtRef = document.querySelector("#in_ln");
+    addressTxtRef = document.querySelector("#in_address");
+    DOBTxtRef = document.querySelector("#in_DOB");
+    emailTxtRef = document.querySelector("#in_email");
+
+    usernameRef = document.querySelector("#in_un");
+    passwordRef = document.querySelector("#in_ps");
+
+    uID = uIDTxtRef.value;
+    firstName = firstNameTxtRef.value;
+    lastName = lastNameTxtRef.value;
+    address = addressTxtRef.value;
+    DOB = DOBTxtRef.value;
+    email = emailTxtRef.value;
+
+    if(uID[0] != 'u' || uID.length != 12){
+        alert("Wrong ID pattern");
+        return;
+    }
+
+    let username = usernameRef.value;
+    let password = passwordRef.value;
+    
+    let user_info = {
+        user: {
+            uID: uID,
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            DOB: DOB,
+            email: email,
+        },
+        account: {
+            username: username,
+            password: password
+        }
+    };
+    
+    callWS("http://localhost:3000/register", "insert", user_info).then(
+        (data) => {
+            console.log(data);
+            if (data && !data.error) {
+                alert("Insert successful");
+
+                clearInput();
+
+                usernameRef.value = "";
+                passwordRef.value = "";
+
+                let result = document.querySelector("#result");
+                result.innerHTML="";
+            }
+        }
+    );
+});
+
+updateBtnRef.addEventListener("click", () => {
+      
+    uIDTxtRef = document.querySelector("#up_id");
+    firstNameTxtRef = document.querySelector("#up_fn");
+    lastNameTxtRef = document.querySelector("#up_ln");
+    addressTxtRef = document.querySelector("#up_address");
+    DOBTxtRef = document.querySelector("#up_DOB");
+    emailTxtRef = document.querySelector("#up_email");
+
+    uID = uIDTxtRef.value;
+    firstName = firstNameTxtRef.value;
+    lastName = lastNameTxtRef.value;
+    address = addressTxtRef.value;
+    DOB = DOBTxtRef.value;
+    email = emailTxtRef.value;
+
+    if(uID[0] != 'u' || uID.length != 12){
+        alert("Wrong ID pattern");
+        return;
+    }
+      
+    let user_info = {
+        user: {
+            uID: uID,
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            DOB: DOB,
+            email: email,
+        },
+    };
+      
+    callWS("http://localhost:3000/user_list", "update", user_info).then(
+        (data) => {
+            if (data && !data.error) {
+                alert("Update Successfully");
+                let result = document.querySelector("#result");
+                result.innerHTML="";
+                clearInput();
+            }
+        }
+    );
+});
+
+deleteBtnRef.addEventListener("click", () => {
+        
+    uIDTxtRef = document.querySelector("#sl_id");
+
+    uID = uIDTxtRef.value;
+
+    console.log(uID);
+
+    let user_info = {
+        uID: uID
+    };
+    
+    if(uID[0] != 'u' || uID.length != 12){
+        alert("Wrong ID pattern");
+        return;
+    }
+
+    callWS("http://localhost:3000/user_list", "delete", user_info).then(
+        (data) => {
+            if (data && !data.error) {
+                alert("Delete Successful");
+                let result = document.querySelector("#result");
+                result.innerHTML="";
+                clearInput();
+            }
+        }
+    );
+});
+
+selectBtnRef.addEventListener("click",() =>{
+    
+    uIDTxtRef = document.querySelector("#sl_id");
+    uID = uIDTxtRef.value.toString();
+    
+    if(uID[0] != 'u' || uID.length != 12){
+        alert("Wrong ID pattern");
+        return;
+    }
+
+    callWS("http://localhost:3000/user_list/" +uID, "select").then(
+        (data) => {
+            console.log(data);
+            if(data && !data.error && data.results){
+                alert("Select Successful");
+                let output = "<h1> User </h1>";
+                output  += "<table class='table'>";
+                output  += "<thead>";
+                output  += "<tr>";
+                output  += "<th scope='col'>#</th><th scope='col'>First name</th><th scope='col'> Last name </th> <th scope='col'>Address</th> <th scope='col'>DOB</th> <th scope='col'>E-mail</th>";
+                output  += "</tr>";
+                output  += "</thread>";
+                output  += "<tbody>";
+                output += "<tr>";
+                output += "<td>" + data.results.uID+"</td>";
+                output += "<td>" + data.results.firstName+"</td>";
+                output += "<td>" + data.results.lastName+"</td>";
+                output += "<td>" + data.results.address+"</td>";
+                output += "<td>" + data.results.DOB+"</td>";
+                output += "<td>" + data.results.email+"</td>";
+                output += "</tbody>";
+                output += "</table>";
+                let result = document.querySelector("#result");
+                result.innerHTML=output;
+                clearInput();
+            }
+        }
+  );
+    
+});
+    
+selectallBtnRef.addEventListener("click",() =>{   
+    callWS("http://localhost:3000/user_list_all", "select").then(
+        (data) => {
+            console.log(data);
+            if (data && !data.error && data.results.length > 0) {
+                alert(data.message);
+                let output = "<h1> User List </h1>";
+                output  += "<table class='table'>";
+                output  += "<thead>";
+                output  += "<tr>";
+                output  += "<th scope='col'>#</th><th scope='col'>First name</th><th scope='col'> Last name </th> <th scope='col'>Address</th> <th scope='col'>DOB</th> <th scope='col'>E-mail</th>";
+                output  += "</tr>";
+                output  += "</thread>";
+                output  += "<tbody>";
+                data.results.forEach((element)=>{
+                    if(element.uID[0] == 'u'){
+                        output += "<tr>";
+                        output += "<td>" + element.uID+"</td>";
+                        output += "<td>" + element.firstName+"</td>";
+                        output += "<td>" + element.lastName+"</td>";
+                        output += "<td>" + element.address+"</td>";
+                        output += "<td>" + element.DOB+"</td>";
+                        output += "<td>" + element.email+"</td>";
+                    }
+                });
+                output += "</tbody>";
+                output += "</table>";
+                let result = document.querySelector("#result");
+                result.innerHTML=output;
+                clearInput();
+            }
+        }
+    );
+})
+</script>
+
+</html>

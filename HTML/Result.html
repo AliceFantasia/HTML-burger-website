@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Result</title>
+        <link rel="stylesheet" href="./Styles/Project.css">
+        <style>
+            .container{
+                display: flex;
+                flex-direction: row;
+                justify-content: left;
+                flex-wrap: wrap;
+            }
+            .collumn{
+                padding: 20px;
+                border-style: double;
+                margin: 10px;
+            }
+            img{
+                display: block;
+                margin: auto;
+                border-radius: 10px;
+                width: 90%;
+            }
+        </style>
+        <script src="Scripts/General.js"></script>
+    </head>
+    <body>
+        <section>
+            <!--Nav bar-->
+            <nav>
+                <a href="/">Homepage</a>
+                <a href="/login">Login</a>
+                <a href="/search">Search</a>
+                <a href="/about">About Us</a>
+            </nav>
+            <section class="container">
+
+            </section>
+        </section>
+        <script>
+            let container = document.querySelector(".container");
+
+            let searchResult = JSON.parse(localStorage.getItem("search_result"));
+            console.log(searchResult);
+            if(searchResult){
+                searchResult.forEach(element => {
+                    let output = `
+                    <section class='collumn' style='width: 25%;'>
+                        <img src='Images/Product/${element.pImage}' alt='Food Images'>
+                    </section>
+                    <section class='collumn' style='width: 66%;'>
+                        Name: ${element.pName}<br>
+                        Price: ${element.pPrice} baht<br>
+                        Cals: ${element.pCal} kcal<br><br>
+                        Info: ${element.pInfo}<br>
+                    </section>`
+                    container.innerHTML += output;
+                });
+            }
+            updateNav();
+        </script>
+    </body>
+</html>
